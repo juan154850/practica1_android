@@ -45,3 +45,5 @@ linux/build/
 *.lock
 .DS_Store
 .metadata
+gitkey
+gitkey.pub
