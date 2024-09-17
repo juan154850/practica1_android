@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.teal,
         useMaterial3: true,
       ),
-      home: const NoteCalculatorPage(),
+      home: const MyWidgetPage(),
     );
   }
 }

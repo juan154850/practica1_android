@@ -1,65 +1,92 @@
 import 'package:flutter/material.dart';
 
-class NoteCalculatorPage extends StatefulWidget {
-  const NoteCalculatorPage({super.key});
+class MyWidgetPage extends StatefulWidget {
+  const MyWidgetPage({super.key});
 
   @override
-  State<NoteCalculatorPage> createState() => _NoteCalculatorPageState();
+  State<MyWidgetPage> createState() => _MyWidgetPageState();
 }
 
-class _NoteCalculatorPageState extends State<NoteCalculatorPage> {
-  bool isCalculating = false;
-  double laboratory = 0.0;
-  double firstProject = 0.0;
-  double secondProject = 0.0;
-  double finalProject = 0.0;
+class _MyWidgetPageState extends State<MyWidgetPage> {
+  final _laboratory = TextEditingController();
+  final _firstNote = TextEditingController();
+  double _finalNote = 0;
 
-  double calculateFinalNote(double laboratory, double firstProject,
-      double secondProject, double finalProject) {
-    setState(() {
-      isCalculating = true;
-    });
-
-    double result;
-    if ((laboratory != 0) &&
-        (firstProject != 0) &&
-        (secondProject != 0) &&
-        (finalProject != 0)) {
-      result = (laboratory * 0.6) +
-          (firstProject * 0.1) +
-          (secondProject * 0.08) +
-          (finalProject * 0.25);
-    } else {
-      result = 0.0;
+  void _calculateFinalNote() {
+    if (_laboratory.text.isEmpty ||
+        double.parse(_laboratory.text) < 0 ||
+        double.parse(_laboratory.text) > 5) {
+      _finalNote = 0;
+      return;
     }
-
+    final laboratory = double.parse(_laboratory.text);
+    final firstNote = double.parse(_firstNote.text);
+    final finalNote = ((laboratory * 0.6)+(firstNote * 0.1));
+    //dejar con 2 decimales
     setState(() {
-      isCalculating = false;
+      _finalNote = (double.parse(finalNote.toStringAsFixed(2)));
     });
-
-    return result;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calculadora nota final',
-            style: TextStyle(color: Colors.black)),
+        title: const Text('Calculadora nota final'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(20.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
             children: [
-              SizedBox(height: 20.0),
-              //input de la primera nota
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Nota de laboratorio',
-                  border: OutlineInputBorder(),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Laboratorio (60%)',
                 ),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType: TextInputType.number,
+                controller: _laboratory,
+                //minimo 0 maximo 5
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un valor';
+                  }
+                  if (double.parse(value) < 0 || double.parse(value) > 5) {
+                    return 'La nota debe ser un valor entre 0 y 5';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Primera entrega proyecto final (10%)',
+                ),
+                keyboardType: TextInputType.number,
+                controller: _firstNote,
+                //minimo 0 maximo 5
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un valor';
+                  }
+                  if (double.parse(value) < 0 || double.parse(value) > 5) {
+                    return 'La nota debe ser un valor entre 0 y 5';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _calculateFinalNote,
+                child: const Text('Calcular nota final'),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Nota final: $_finalNote',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
